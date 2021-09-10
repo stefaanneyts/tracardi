@@ -50,7 +50,7 @@ class Twillo(ActionRunner):
             self.status += str(exc) + '\n'
         if not self.status == '':
             ActionRunner.console = self.status
-            print(ActionRunner.console)
+            # print(ActionRunner.console)
             return Result(port='session', value=False)
         return Result(port='session', value=True)
 
