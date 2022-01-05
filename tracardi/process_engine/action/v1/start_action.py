@@ -1,3 +1,7 @@
+from tracardi.domain.flow import Flow
+from tracardi_graph_runner.domain.edge import Edge
+from tracardi_graph_runner.domain.node import Node
+from tracardi_graph_runner.service.node_indexer import index_nodes
 from tracardi_plugin_sdk.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc
 from tracardi_plugin_sdk.domain.result import Result
 from tracardi_plugin_sdk.action_runner import ActionRunner
@@ -9,9 +13,9 @@ class StartAction(ActionRunner):
         pass
 
     async def run(self, payload):
-
-        if self.event.metadata.profile_less is False and self.debug and self.profile.id == '@debug-profile-id':
-            raise ValueError("Start action can not run in debug mode without connection to Debug action.")
+        if self.debug:
+            if not self.node.has_input_node(self.flow.flowGraph.nodes, class_name='DebugPayloadAction'):
+                raise ValueError("Start action can not run in debug mode without connection to Debug action.")
 
         return Result(port="payload", value={})
 

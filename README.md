@@ -30,7 +30,7 @@ a legacy system you can integrate TRACARDI easily. Use TRACARDI for:
 
 # Installation
 
-The easiest way to run Tracardi is to run it as a docker container. 
+The easiest way to run Tracardi is to run it as a docker container. If you are looking for other installation types visit: [http://docs.tracardi.com/installation/](http://docs.tracardi.com/installation/)
 
 In order to do that you must have docker installed on your local machine. 
 Please refer to docker installation manual to see how to install docker.
@@ -54,6 +54,15 @@ docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 -e USER_NAME=
 
 Tracardi must connect to elastic. To do that you have to set ELASTIC_HOST variable to reference your laptop's IP. 
 
+> "Waiting for application startup" issue
+> 
+> Notice that when type `http://localhost:9200` as ELASTIC_HOST you try to connect to Elastic on localhost. This means that you're
+> connecting to the docker itself as localhost means local in docker. Obviously elastic is not there, so Tracardi will
+> never connect that is why you see "Waiting for application startup" information. Pass external ip for elastic. This may be your laptop IP if you are running Tracardi locally, e.g. 192.168.1.143:9200. Please refer to Tracardi documentation for more Troubleshooting information.
+
+For more trouble shooting solutions go to [http://docs.tracardi.com/trouble/](http://docs.tracardi.com/trouble/)
+
+
 ## Start Tracardi GUI
 
 Now pull and run Tracardi Graphical User Interface.
@@ -62,9 +71,26 @@ Now pull and run Tracardi Graphical User Interface.
 docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-gui
 ```
 
+## Start Tracardi Documentation
+
+Now pull and run Tracardi Documentation.
+
+```
+docker run -p 8585:8585 tracardi/tracardi-docs
+```
+
 ## Log-in
 
 Visit http://127.0.0.1:8787 and login to Tracardi GUI with default username: admin and password: admin. 
+
+## System Documentation
+
+Visit http://127.0.0.1:8585. System documentationis also available at: [http://docs.tracardi.com](http://docs.tracardi.com)
+
+## API Documentation
+
+Visit http://127.0.0.1:8686/docs
+
 
 # Scaling Tracardi for heavy load. 
  

@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='tracardi',
-    version='0.6.24',
+    version='0.6.25',
     description='Tracardi Customer Data Platform backend',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -37,7 +37,12 @@ setup(
         'barcodenumber',
         'astral',
         'jsonschema',
-        'python-dateutil'
+        'python-dateutil',
+        'mailchimp-transactional',
+        'email-validator',
+        'lxml',
+        'beautifulsoup4',
+        'names==0.3.0'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

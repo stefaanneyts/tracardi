@@ -1,7 +1,7 @@
 import logging
 import elasticsearch
 import tracardi.service.storage.elastic_storage as storage
-from typing import List
+from typing import List, Union
 from tracardi.domain.storage_aggregate_result import StorageAggregateResult
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from datetime import datetime
@@ -61,10 +61,16 @@ class SqlSearchQueryEngine:
                     "match_all": {}
                 }
             }
+        else:
+            query = {
+                "query": query
+            }
 
         query['from'] = start
         query['size'] = limit
+
         result = await self.persister.query(query)
+
         return StorageResult(result).dict()
 
     def _query(self, query: DatetimeRangePayload, min_date_time, max_date_time, time_field: str,
@@ -114,7 +120,6 @@ class SqlSearchQueryEngine:
 
         time_field = self.time_fields_map[self.index]
         es_query = self._query(query, min_date_time, max_date_time, time_field, time_zone)
-
         try:
             result = await self.persister.filter(es_query)
         except StorageException as e:
@@ -228,9 +233,18 @@ class PersistenceService:
                 raise StorageException(str(e), message=message, details=details)
             raise StorageException(str(e))
 
-    async def load_by(self, field: str, value: str, limit: int = 100) -> StorageResult:
+    async def load_by(self, field: str, value: Union[str, int, float, bool], limit: int = 100) -> StorageResult:
         try:
             return StorageResult(await self.storage.load_by(field, value, limit))
+        except elasticsearch.exceptions.ElasticsearchException as e:
+            if len(e.args) == 2:
+                message, details = e.args
+                raise StorageException(str(e), message=message, details=details)
+            raise StorageException(str(e))
+
+    async def load_by_query_string(self, query_string: str, limit: int = 100) -> StorageResult:
+        try:
+            return StorageResult(await self.storage.load_by_query_string(query_string, limit))
         except elasticsearch.exceptions.ElasticsearchException as e:
             if len(e.args) == 2:
                 message, details = e.args
@@ -364,7 +378,7 @@ class PersistenceService:
                 raise StorageException(str(e), message=message, details=details)
             raise StorageException(str(e))
 
-    async def query_by_sql(self, query: str, start: int = 0, limit: int = 0):
+    async def query_by_sql(self, query: str, start: int = 0, limit: int = 0) -> StorageResult:
         engine = SqlSearchQueryEngine(self)
         return await engine.search(query, start, limit)
 

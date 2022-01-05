@@ -22,3 +22,9 @@ barcodenumber
 astral
 jsonschema
 python-dateutil
+mailchimp-transactional
+email-validator
+lxml
+beautifulsoup4
+mailchimp-marketing
+names==0.3.0
